@@ -1,0 +1,37 @@
+/* src/index.css */
+/* Global styles and Tailwind CSS imports for Loveworld Radio Mongolia */
+/* Defines brand colors matching the TV site, plus radio-specific additions */
+/* RELEVANT FILES: vite.config.ts, src/main.tsx, src/App.tsx */
+
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+
+  /* Brand colors — matching loveworldtv.mn */
+  --color-brand-primary: #1A4B8C;
+  --color-brand-dark: #0D2E5C;
+  --color-brand-light: #2E6DB8;
+  --color-brand-accent: #2E6DB8;
+  --color-brand-accent-light: #5A93D0;
+  --color-brand-orange: #C8102E;
+  --color-brand-gold: #D4A542;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-brand-dark text-white antialiased font-sans;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
