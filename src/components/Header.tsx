@@ -1,9 +1,7 @@
 // src/components/Header.tsx
 // Fixed navigation header with logo and links to TV site
 // Provides consistent branding matching loveworldtv.mn
-// RELEVANT FILES: src/App.tsx, src/components/Footer.tsx, public/assets/logo_white.png
-
-import { Radio } from 'lucide-react';
+// RELEVANT FILES: src/App.tsx, src/components/Footer.tsx, public/assets/logo.png
 
 export default function Header() {
   return (
@@ -12,9 +10,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 sm:h-20 px-4 sm:px-8 lg:px-20 xl:px-36">
           {/* Logo */}
           <a href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-orange/10 border border-brand-orange/20">
-              <Radio className="w-5 h-5 text-brand-orange" />
-            </div>
+            <img
+              src="/assets/logo.png"
+              alt="Loveworld Radio Mongolia"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+            />
             <div className="flex flex-col">
               <span className="text-base sm:text-lg font-bold tracking-wide leading-tight">
                 Loveworld Radio
