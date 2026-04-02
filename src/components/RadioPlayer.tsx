@@ -72,8 +72,7 @@ export default function RadioPlayer() {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Radio Player</h3>
                 <p className="text-sm text-gray-400 max-w-md mx-auto">
-                  The live radio player will appear here once the streaming service is configured.
-                  Check <code className="text-brand-gold bg-white/5 px-1.5 py-0.5 rounded text-xs">RadioPlayer.tsx</code> for setup instructions.
+                  Coming soon — stay tuned!
                 </p>
               </div>
             )}
