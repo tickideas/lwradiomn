@@ -3,7 +3,7 @@
 // Provides persistent audio playback that stays visible during scroll
 // RELEVANT FILES: src/config.ts, src/App.tsx, src/components/Header.tsx
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { STREAM_URL } from '@/config';
 
@@ -12,6 +12,37 @@ export default function StickyPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
+  const [showUnmuteHint, setShowUnmuteHint] = useState(false);
+
+  // Autoplay on mount: try with sound, fall back to muted
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.src = STREAM_URL;
+    audio.volume = volume;
+
+    audio.play()
+      .then(() => {
+        // Autoplay with sound succeeded
+        setIsPlaying(true);
+      })
+      .catch(() => {
+        // Browser blocked autoplay with sound — retry muted
+        audio.muted = true;
+        audio.play()
+          .then(() => {
+            setIsPlaying(true);
+            setIsMuted(true);
+            setShowUnmuteHint(true);
+          })
+          .catch(() => {
+            // Even muted autoplay blocked — user must click play
+            audio.src = '';
+            setIsPlaying(false);
+          });
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
@@ -19,15 +50,14 @@ export default function StickyPlayer() {
 
     if (isPlaying) {
       audio.pause();
-      // Reset src to stop buffering the live stream
       audio.src = '';
       setIsPlaying(false);
+      setShowUnmuteHint(false);
     } else {
-      // Re-set src to get the latest point in the live stream
       audio.src = STREAM_URL;
       audio.volume = isMuted ? 0 : volume;
+      audio.muted = isMuted;
       audio.play().catch(() => {
-        // Browser blocked autoplay — user needs to interact first
         setIsPlaying(false);
       });
       setIsPlaying(true);
@@ -39,9 +69,12 @@ export default function StickyPlayer() {
     if (!audio) return;
 
     if (isMuted) {
+      audio.muted = false;
       audio.volume = volume;
       setIsMuted(false);
+      setShowUnmuteHint(false);
     } else {
+      audio.muted = true;
       audio.volume = 0;
       setIsMuted(true);
     }
@@ -52,8 +85,10 @@ export default function StickyPlayer() {
       const newVolume = parseFloat(e.target.value);
       setVolume(newVolume);
       setIsMuted(newVolume === 0);
+      setShowUnmuteHint(false);
       if (audioRef.current) {
         audioRef.current.volume = newVolume;
+        audioRef.current.muted = newVolume === 0;
       }
     },
     [],
@@ -94,8 +129,19 @@ export default function StickyPlayer() {
             </div>
           </div>
 
-          {/* Right: Volume controls */}
+          {/* Right: Volume controls + unmute hint */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Unmute hint — shown when autoplay fell back to muted */}
+            {showUnmuteHint && (
+              <button
+                onClick={toggleMute}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-gold/20 border border-brand-gold/30 text-brand-gold text-xs font-medium animate-pulse hover:bg-brand-gold/30 transition-colors"
+              >
+                <Volume2 className="w-3.5 h-3.5" />
+                Tap to unmute
+              </button>
+            )}
+
             {/* Volume slider — hidden on mobile */}
             <input
               type="range"
